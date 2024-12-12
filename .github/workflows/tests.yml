@@ -29,6 +29,9 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
+      - name: Create test database file
+        run: touch database/database_test.sqlite
+
       - name: Run migrations
         run: php artisan migrate --force
 
