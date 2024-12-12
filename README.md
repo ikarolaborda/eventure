@@ -1,4 +1,8 @@
 # Eventure
+
+![Tests](https://github.com/ikarolaborda/eventure/actions/workflows/tests.yml/badge.svg)
+
+
 Eventure is an online event reservation system built with Laravel and JWT authentication. It allows users to register, log in, create events, and reserve tickets. Authenticated users can:
 
 - Create and manage events (including setting title, description, start/end dates, booking deadlines, attendee limits, price, and location).
