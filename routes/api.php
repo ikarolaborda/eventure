@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     Route::post('/register', RegisterController::class);
     Route::post('/login', LoginController::class);
-    Route::post('/logout', LogoutController::class);
-    Route::post('/refresh', RefreshController::class);
+
+    Route::middleware('auth:api')->post('/logout', LogoutController::class);
+    Route::middleware('auth:api')->post('/refresh', RefreshController::class);
 });
+

@@ -41,10 +41,12 @@ cd eventure
 composer install
 ```
 
-3. **Environment Setup**: Copy the .env.example file to .env:
+3. **Environment Setup**: Copy the .env.example file to .env and create the app and test databases:
 
 ```bash
 cp .env.example .env
+touch database/database.sqlite
+touch database/database_test.sqlite
 ```
 Update database and JWT settings in .env as needed:
 
