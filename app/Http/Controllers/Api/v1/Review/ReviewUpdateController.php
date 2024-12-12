@@ -7,6 +7,7 @@ use App\Http\Requests\Api\v1\Review\ReviewUpdateRequest;
 use App\Repositories\EventRepositoryInterface;
 use App\Repositories\ReviewRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReviewUpdateController extends Controller
@@ -16,6 +17,49 @@ class ReviewUpdateController extends Controller
         private readonly ReviewRepositoryInterface $reviewRepository
     ) {}
 
+    #[OA\Put(
+        path: "/api/v1/events/{eventId}/reviews/{reviewId}",
+        operationId: "updateReview",
+        summary: "Update an existing review",
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(ref: "#/components/schemas/ReviewUpdateRequest")
+        ),
+        tags: ["Reviews"],
+        parameters: [
+            new OA\Parameter(
+                name: "eventId",
+                description: "Event ID",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+            new OA\Parameter(
+                name: "reviewId",
+                description: "Review ID",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: "Review updated",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string"),
+                        new OA\Property(property: "review", type: "object")
+                    ]
+                )
+            ),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: "Unauthorized"),
+            new OA\Response(response: Response::HTTP_FORBIDDEN, description: "Not the owner of the review"),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: "Event or review not found"),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: "Validation error")
+        ]
+    )]
     public function __invoke(ReviewUpdateRequest $request, int $eventId, int $reviewId): Response
     {
         $user = Auth::user();

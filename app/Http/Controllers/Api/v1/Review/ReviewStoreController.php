@@ -8,6 +8,7 @@ use App\Repositories\EventRepositoryInterface;
 use App\Repositories\ReservationRepositoryInterface;
 use App\Repositories\ReviewRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReviewStoreController extends Controller
@@ -18,6 +19,39 @@ class ReviewStoreController extends Controller
         private readonly ReviewRepositoryInterface $reviewRepository
     ) {}
 
+    #[OA\Post(
+        path: "/api/v1/events/{eventId}/reviews",
+        operationId: "createReview",
+        summary: "Create a new review for an event the user attended",
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: "#/components/schemas/ReviewStoreRequest")
+        ),
+        tags: ["Reviews"],
+        parameters: [
+            new OA\Parameter(
+                name: "eventId",
+                description: "ID of the event to review",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_CREATED,
+                description: "Review created",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "message", type: "string"),
+                    new OA\Property(property: "review", type: "object")
+                ])
+            ),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: "Unauthorized"),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: "Event not found"),
+            new OA\Response(response: Response::HTTP_UNPROCESSABLE_ENTITY, description: "Validation error or event not ended/user not attended")
+        ]
+    )]
     public function __invoke(ReviewStoreRequest $request, int $eventId): Response
     {
         $user = Auth::user();

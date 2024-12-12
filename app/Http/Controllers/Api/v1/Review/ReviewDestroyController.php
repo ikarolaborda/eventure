@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\EventRepositoryInterface;
 use App\Repositories\ReviewRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReviewDestroyController extends Controller
@@ -15,6 +16,43 @@ class ReviewDestroyController extends Controller
         private readonly ReviewRepositoryInterface $reviewRepository
     ) {}
 
+    #[OA\Delete(
+        path: "/api/v1/events/{eventId}/reviews/{reviewId}",
+        operationId: "deleteReview",
+        summary: "Delete a review",
+        security: [["bearerAuth" => []]],
+        tags: ["Reviews"],
+        parameters: [
+            new OA\Parameter(
+                name: "eventId",
+                description: "Event ID",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+            new OA\Parameter(
+                name: "reviewId",
+                description: "Review ID",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: Response::HTTP_OK,
+                description: "Review deleted successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "message", type: "string")
+                    ]
+                )
+            ),
+            new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: "Unauthorized"),
+            new OA\Response(response: Response::HTTP_FORBIDDEN, description: "Not the owner of the review"),
+            new OA\Response(response: Response::HTTP_NOT_FOUND, description: "Event or review not found")
+        ]
+    )]
     public function __invoke(int $eventId, int $reviewId): Response
     {
         $user = Auth::user();
