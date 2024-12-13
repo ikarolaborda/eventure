@@ -29,7 +29,7 @@ class LogoutController
             new OA\Response(response: Response::HTTP_UNAUTHORIZED, description: "Unauthorized")
         ]
     )]
-    public function __invoke(string $token)
+    public function __invoke()
     {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
