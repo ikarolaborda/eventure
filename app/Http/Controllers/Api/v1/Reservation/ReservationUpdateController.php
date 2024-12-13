@@ -19,7 +19,7 @@ class ReservationUpdateController
     #[OA\Put(
         path: "/api/v1/reservations/{id}",
         operationId: "updateReservation",
-        summary: "Update a reservation (example, if you implement partial updates)",
+        summary: "Update a reservation (Use case for this endpoint needs to be confirmed)",
         security: [["bearerAuth" => []]],
         requestBody: new OA\RequestBody(
             required: false,
